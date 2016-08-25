@@ -1,7 +1,8 @@
 import json
 from icalendar import Calendar, Event, vText
 from dateutil import parser as du_parser
-from dateutil.tz import tzlocal
+from dateutil.tz import tzlocal, tzutc
+import pytz
 import datetime
 import getpass
 import requests
@@ -36,14 +37,15 @@ weekday_abbrv_converter = {"U": "SU", "M": "MO", "T": "TU", "W": "WE", "R": "TH"
 
 def make_calender(userdata_json):
     cal = Calendar()
+    pacific_time = pytz.timezone('America/Los_Angeles') # Berkeley uses Pacific time
     for section in userdata_json['currentSectionData']:
         dept, course_number, section_number, ccn = section['subjectId'], section['course'], section['sectionNumber'], section['id']
         meeting = section['meetings'][0]
         meeting_type = meeting['meetingType']
         start_date, end_date = du_parser.parse(meeting['startDate']), du_parser.parse(meeting['endDate'])
         start_time, end_time = datetime.datetime.strptime(str(meeting['startTime']), "%H%M"), datetime.datetime.strptime(str(meeting['endTime']), "%H%M")
-        dtstart = start_date.replace(hour=start_time.hour, minute=start_time.minute, tzinfo=tzlocal())
-        dtend = start_date.replace(hour=end_time.hour, minute=end_time.minute, tzinfo=tzlocal())
+        dtstart = pacific_time.localize(start_date.replace(hour=start_time.hour, minute=start_time.minute, tzinfo=None)).astimezone(tzutc())
+        dtend = pacific_time.localize(start_date.replace(hour=end_time.hour, minute=end_time.minute, tzinfo=None)).astimezone(tzutc())
         byday = [weekday_abbrv_converter[x] for x in meeting['daysRaw']]
         location = meeting['location']
         section_name = "{}{} {} {}".format(dept, course_number, meeting_type, section_number)
