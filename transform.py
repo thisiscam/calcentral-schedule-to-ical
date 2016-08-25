@@ -7,6 +7,7 @@ import getpass
 import requests
 import re
 import sys
+import warnings
 
 headers = {
     'Origin': 'https://auth.berkeley.edu',
@@ -47,6 +48,9 @@ def make_calender(userdata_json):
         byday = [weekday_abbrv_converter[x] for x in meeting['daysRaw']]
         location = meeting['location']
         section_name = "{}{} {} {}".format(dept, course_number, meeting_type, section_number)
+        if len(byday) == 0:
+            warnings.warn("Your {} has no appointed time, ignored in calender".format(section_name))
+            continue
         event = Event()
         event.add('summary', section_name)
         event.add('dtstart', dtstart)
@@ -65,3 +69,13 @@ def main(filename):
     text = calender.to_ical()
     with open(filename, 'w+') as f:
         f.write(text)
+
+import argparse
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Generate ical from calcentral scheduler planner')
+    parser.add_argument('-o', '--outfile', type=str, dest="outfile",
+                        default="schedule.ical",
+                        help="ouput filename")
+    options = parser.parse_args()
+    main(options.outfile)
