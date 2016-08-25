@@ -7,7 +7,6 @@ import getpass
 import requests
 import re
 import sys
-import warnings
 
 headers = {
     'Origin': 'https://auth.berkeley.edu',
@@ -49,7 +48,7 @@ def make_calender(userdata_json):
         location = meeting['location']
         section_name = "{}{} {} {}".format(dept, course_number, meeting_type, section_number)
         if len(byday) == 0:
-            warnings.warn("Your {} has no appointed time, ignored in calender".format(section_name))
+            print "warning: Your {} has no appointed time, ignored in calender".format(section_name)
             continue
         event = Event()
         event.add('summary', section_name)
