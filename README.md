@@ -1,3 +1,5 @@
+Automatically log in to CalCentral, fetch enrolled sections and generate a calendar file(.ical).
+
 # Usage
 
 ```
