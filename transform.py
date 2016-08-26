@@ -46,8 +46,8 @@ def make_calender(userdata_json):
         meeting_type = meeting['meetingType']
         start_date, end_date = du_parser.parse(meeting['startDate']), du_parser.parse(meeting['endDate'])
         start_time, end_time = datetime.datetime.strptime(str(meeting['startTime']), "%H%M"), datetime.datetime.strptime(str(meeting['endTime']), "%H%M")
-        dtstart = pacific_time.localize(start_date.replace(hour=start_time.hour, minute=start_time.minute, tzinfo=None)).astimezone(tzutc())
-        dtend = pacific_time.localize(start_date.replace(hour=end_time.hour, minute=end_time.minute, tzinfo=None)).astimezone(tzutc())
+        dtstart = pacific_time.localize(start_date.replace(hour=start_time.hour, minute=start_time.minute, tzinfo=None))
+        dtend = pacific_time.localize(start_date.replace(hour=end_time.hour, minute=end_time.minute, tzinfo=None))
         byday = [weekday_abbrv_converter[x] for x in meeting['daysRaw']]
         location = meeting['location']
         section_name = "{}{} {} {}".format(dept, course_number, meeting_type, section_number)
