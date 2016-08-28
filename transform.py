@@ -50,7 +50,7 @@ def make_calender(userdata_json):
         dtend = pacific_time.localize(start_date.replace(hour=end_time.hour, minute=end_time.minute, tzinfo=None))
         byday = [weekday_abbrv_converter[x] for x in meeting['daysRaw']]
         location = meeting['location']
-        section_name = "{}{} {} {}".format(dept, course_number, meeting_type, section_number)
+        section_name = "{} {} {} {}".format(dept, course_number, meeting_type, section_number)
         if len(byday) == 0:
             print "warning: Your {} has no appointed time, ignored in calender".format(section_name)
             continue
@@ -79,7 +79,7 @@ import argparse
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Generate ical from calcentral scheduler planner')
     parser.add_argument('-o', '--outfile', type=str, dest="outfile",
-                        default="schedule.ical",
+                        default="schedule.ics",
                         help="ouput filename")
     options = parser.parse_args()
     main(options.outfile)
