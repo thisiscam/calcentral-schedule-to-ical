@@ -41,27 +41,30 @@ def make_calender(userdata_json):
     cal = Calendar()
     pacific_time = pytz.timezone('America/Los_Angeles') # Berkeley uses Pacific time
     for section in userdata_json['currentSectionData']:
-        if len(section['meetings']) != 0:
-            dept, course_number, section_number, ccn = section['subjectId'], section['course'], section['sectionNumber'], section['id']
-            meeting = section['meetings'][0]
-            meeting_type = meeting['meetingType']
-            start_date, end_date = du_parser.parse(meeting['startDate']), du_parser.parse(meeting['endDate'])
-            start_time, end_time = datetime.datetime.strptime(str(meeting['startTime']), "%H%M"), datetime.datetime.strptime(str(meeting['endTime']), "%H%M")
-            dtstart = pacific_time.localize(start_date.replace(hour=start_time.hour, minute=start_time.minute, tzinfo=None))
-            dtend = pacific_time.localize(start_date.replace(hour=end_time.hour, minute=end_time.minute, tzinfo=None))
-            byday = [weekday_abbrv_converter[x] for x in meeting['daysRaw']]
-            location = meeting['location']
-            section_name = "{} {} {} {}".format(dept, course_number, meeting_type, section_number)
-            if len(byday) == 0:
-                print "warning: Your {} has no appointed time, ignored in calender".format(section_name)
-                continue
-            event = Event()
-            event.add('summary', section_name)
-            event.add('dtstart', dtstart)
-            event.add('dtend', dtend)
-            event['location'] = vText(location)
-            event.add('rrule', {'freq': 'weekly', 'until': end_date, 'byday': byday})
-            cal.add_component(event)
+        dept, course_number, section_number, ccn = section['subjectId'], section['course'], section['sectionNumber'], section['id']
+        section_dept_and_number = "{} {}".format(dept, course_number)
+        if len(section['meetings']) == 0:
+            print "warning: Your {} has no meeting, ignored in calender".format(section_dept_and_number)
+            continue
+        meeting = section['meetings'][0]
+        meeting_type = meeting['meetingType']
+        start_date, end_date = du_parser.parse(meeting['startDate']), du_parser.parse(meeting['endDate'])
+        start_time, end_time = datetime.datetime.strptime(str(meeting['startTime']), "%H%M"), datetime.datetime.strptime(str(meeting['endTime']), "%H%M")
+        dtstart = pacific_time.localize(start_date.replace(hour=start_time.hour, minute=start_time.minute, tzinfo=None))
+        dtend = pacific_time.localize(start_date.replace(hour=end_time.hour, minute=end_time.minute, tzinfo=None))
+        byday = [weekday_abbrv_converter[x] for x in meeting['daysRaw']]
+        location = meeting['location']
+        event_name = "{} {} {}".format(section_dept_and_number, meeting_type, section_number)
+        if len(byday) == 0:
+            print "warning: Your {} has no appointed time, ignored in calender".format(event_name)
+            continue
+        event = Event()
+        event.add('summary', event_name)
+        event.add('dtstart', dtstart)
+        event.add('dtend', dtend)
+        event['location'] = vText(location)
+        event.add('rrule', {'freq': 'weekly', 'until': end_date, 'byday': byday})
+        cal.add_component(event)
     return cal
 
 def main(filename):
