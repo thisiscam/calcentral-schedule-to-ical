@@ -31,7 +31,7 @@ def calnet_login(username, password):
     return s
 
 def get_userdata(session):
-    schedule_response = session.get('https://calcentral.berkeley.edu/college_scheduler/UGRD/2168')
+    schedule_response = session.get('https://calcentral.berkeley.edu/college_scheduler/student/UGRD/2168')
     matches = re.findall('jsonData = (.*?);\s*Scheduler.initialize', schedule_response.text, re.DOTALL)
     return json.loads(matches[0])
 
