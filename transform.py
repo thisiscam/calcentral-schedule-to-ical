@@ -1,3 +1,6 @@
+from __future__ import print_function
+from builtins import input
+
 import json
 from icalendar import Calendar, Event, vText
 from dateutil import parser as du_parser
@@ -44,7 +47,7 @@ def make_calender(userdata_json):
         dept, course_number, section_number, ccn = section['subjectId'], section['course'], section['sectionNumber'], section['id']
         section_dept_and_number = "{} {}".format(dept, course_number)
         if len(section['meetings']) == 0:
-            print "warning: Your {} has no meeting, ignored in calender".format(section_dept_and_number)
+            print("warning: Your {} has no meeting, ignored in calender".format(section_dept_and_number))
             continue
         meeting = section['meetings'][0]
         meeting_type = meeting['meetingType']
@@ -56,7 +59,7 @@ def make_calender(userdata_json):
         location = meeting['location']
         event_name = "{} {} {}".format(section_dept_and_number, meeting_type, section_number)
         if len(byday) == 0:
-            print "warning: Your {} has no appointed time, ignored in calender".format(event_name)
+            print("warning: Your {} has no appointed time, ignored in calender".format(event_name))
             continue
         event = Event()
         event.add('summary', event_name)
@@ -68,15 +71,15 @@ def make_calender(userdata_json):
     return cal
 
 def main(filename):
-    username = raw_input('CalNet ID:')
+    username = input('CalNet ID:')
     password = getpass.getpass()
     session = calnet_login(username, password)
     userdata_json = get_userdata(session)
     calender = make_calender(userdata_json)
     text = calender.to_ical()
-    with open(filename, 'w+') as f:
+    with open(filename, 'wb+') as f:
         f.write(text)
-    print "Schedule saved to {}".format(filename)
+    print("Schedule saved to {}".format(filename))
 
 import argparse
 
