@@ -2,7 +2,7 @@ Automatically log in to CalCentral, fetch enrolled sections and generate a calen
 
 # Usage
 
-## Python script
+## Python Script
 
 ```
 $ pip install -r requirements.txt
