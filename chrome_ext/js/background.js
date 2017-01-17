@@ -10,7 +10,7 @@ if (!String.prototype.format) {
   };
 }
 
-/* Add LA time */	
+/* Add LA time */   
 moment.tz.add('America/Los_Angeles|PST PDT|80 70|0101|1Lzm0 1zb0 Op0');
 
 let weekday_abbrv_converter = {"U": "SU", "M": "MO", "T": "TU", "W": "WE", "R": "TH", "F": "FR", "S": "SA"}
@@ -43,15 +43,15 @@ let timezone = new ICAL.Timezone({
 });
 
 function makeCalender(userdata) {
-	let cal = new ICAL.Component(['vcalendar', [], []]);
-	pacific_time = 'America/Los_Angeles'; // Berkeley uses Pacific time
+    let cal = new ICAL.Component(['vcalendar', [], []]);
+    pacific_time = 'America/Los_Angeles'; // Berkeley uses Pacific time
     cal.updatePropertyWithValue('X-WR-TIMEZONE', pacific_time);
     cal.addSubcomponent(vtimezoneComp);
     for(section of userdata['currentSectionData']) {
         let dept = section['subjectId'], 
-        	course_number = section['course'], 
-        	section_number = section['sectionNumber'], 
-        	ccn = section['id']
+            course_number = section['course'], 
+            section_number = section['sectionNumber'], 
+            ccn = section['id']
         ;
         let section_dept_and_number = "{0} {1}".format(dept, course_number);
         if(section['meetings'].length == 0) {
@@ -61,7 +61,7 @@ function makeCalender(userdata) {
         let meeting = section['meetings'][0];
         let meeting_type = meeting['meetingType'];
         let start_date = moment.tz(meeting['startDate'], pacific_time), 
-        	end_date = moment.tz(meeting['endDate'], pacific_time);
+            end_date = moment.tz(meeting['endDate'], pacific_time);
         let start_time = meeting["startTime"], end_time = meeting['endTime'];
         let dtstart = start_date.clone().set({"hour": start_time / 100, "minute": start_time % 100});
         let dtend = start_date.clone().set({"hour": end_time / 100, "minute": end_time % 100});
@@ -79,9 +79,9 @@ function makeCalender(userdata) {
         event.endDate = ICAL.Time.fromJSDate(dtend.toDate()).convertToZone(timezone);
         event['location'] = location;
         let rrule = new ICAL.Recur({
-        	'freq': 'WEEKLY',
-        	'until': ICAL.Time.fromJSDate(end_date.toDate()).convertToZone(timezone),
-        	'byday': byday
+            'freq': 'WEEKLY',
+            'until': ICAL.Time.fromJSDate(end_date.toDate()).convertToZone(timezone),
+            'byday': byday
         });
         vevent.updatePropertyWithValue('rrule', rrule);
         cal.addSubcomponent(vevent);
@@ -90,20 +90,20 @@ function makeCalender(userdata) {
 }
 
 chrome.pageAction.onClicked.addListener(function (tab) {
-	chrome.tabs.sendMessage(
-		tab.id, 
-		'get_userdata', 
-		responseCallback=function(userdata) {
-			calender = makeCalender(userdata);
-			let calendar_str = calender.toString();
-			let download_str_uri = 'data:text/calender;charset=utf-8,' + encodeURIComponent(calendar_str);
-			chrome.downloads.download({
-				url: download_str_uri,
-				filename:"schedule.ics",
-				saveAs: true
-			});
-		}
-	);
+    chrome.tabs.sendMessage(
+        tab.id, 
+        'get_userdata', 
+        responseCallback=function(userdata) {
+            calender = makeCalender(userdata);
+            let calendar_str = calender.toString();
+            let download_str_uri = 'data:text/calender;charset=utf-8,' + encodeURIComponent(calendar_str);
+            chrome.downloads.download({
+                url: download_str_uri,
+                filename:"schedule.ics",
+                saveAs: true
+            });
+        }
+    );
 });
 
 
