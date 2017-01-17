@@ -1,8 +1,8 @@
-Automatically log in to CalCentral, fetch enrolled sections and generate a calendar file(.ical).
-
 # Usage
 
 ## Python Script
+
+Automatically log in to CalCentral, fetch enrolled sections and generate a calendar file(.ical).
 
 ```
 $ pip install -r requirements.txt
