@@ -2,11 +2,12 @@ Automatically log in to CalCentral, fetch enrolled sections and generate a calen
 
 # Usage
 
+## Python script
+
 ```
 $ pip install -r requirements.txt
 $ python transform.py [-o output_file]
 ```
-
 
 ## Chrome Extension
 
