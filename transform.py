@@ -3,6 +3,7 @@ from builtins import input
 
 import json
 from icalendar import Calendar, Event, vText
+from icalendar.cal import Component
 from dateutil import parser as du_parser
 from dateutil.tz import tzlocal, tzutc
 import pytz
@@ -38,10 +39,33 @@ def get_userdata(session):
     matches = re.findall('jsonData = (.*?);\s*Scheduler.initialize', schedule_response.text, re.DOTALL)
     return json.loads(matches[0])
 
+vtimezone_str = \
+"""BEGIN:VTIMEZONE
+TZID:America/Los_Angeles
+X-LIC-LOCATION:America/Los_Angeles
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0800
+TZOFFSETTO:-0700
+TZNAME:PDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0700
+TZOFFSETTO:-0800
+TZNAME:PST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE"""
+
+timezone = Component.from_ical(vtimezone_str)
+
 weekday_abbrv_converter = {"U": "SU", "M": "MO", "T": "TU", "W": "WE", "R": "TH", "F": "FR", "S": "SA"}
 
 def make_calender(userdata_json):
     cal = Calendar()
+    cal.add_component(timezone)
     pacific_time = pytz.timezone('America/Los_Angeles') # Berkeley uses Pacific time
     for section in userdata_json['currentSectionData']:
         dept, course_number, section_number, ccn = section['subjectId'], section['course'], section['sectionNumber'], section['id']

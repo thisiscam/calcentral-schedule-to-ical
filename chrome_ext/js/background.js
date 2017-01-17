@@ -10,9 +10,6 @@ if (!String.prototype.format) {
   };
 }
 
-/* Add LA time */   
-moment.tz.add('America/Los_Angeles|PST PDT|80 70|0101|1Lzm0 1zb0 Op0');
-
 let weekday_abbrv_converter = {"U": "SU", "M": "MO", "T": "TU", "W": "WE", "R": "TH", "F": "FR", "S": "SA"}
 
 let vtimezone_str = 
@@ -60,11 +57,11 @@ function makeCalender(userdata) {
         }
         let meeting = section['meetings'][0];
         let meeting_type = meeting['meetingType'];
-        let start_date = moment.tz(meeting['startDate'], pacific_time), 
-            end_date = moment.tz(meeting['endDate'], pacific_time);
+        let start_date = new Date(meeting['startDate']);
+            end_date = new Date(meeting['endDate']);
         let start_time = meeting["startTime"], end_time = meeting['endTime'];
-        let dtstart = start_date.clone().set({"hour": start_time / 100, "minute": start_time % 100});
-        let dtend = start_date.clone().set({"hour": end_time / 100, "minute": end_time % 100});
+        let dtstart = new Date(start_date.getUTCFullYear(), start_date.getUTCMonth(), start_date.getUTCDate(), start_time / 100, start_time % 100, 0);
+        let dtend = new Date(start_date.getUTCFullYear(), start_date.getUTCMonth(), start_date.getUTCDate(), end_time / 100, end_time % 100, 0);
         let byday = meeting['daysRaw'].split('').map(function(x) { return weekday_abbrv_converter[x]; } );
         let location = meeting['location'];
         let event_name = "{0} {1} {2}".format(section_dept_and_number, meeting_type, section_number);
@@ -75,12 +72,12 @@ function makeCalender(userdata) {
         let vevent = new ICAL.Component('vevent'),
             event = new ICAL.Event(vevent);
         event.summary = event_name;
-        event.startDate = ICAL.Time.fromJSDate(dtstart.toDate()).convertToZone(timezone);
-        event.endDate = ICAL.Time.fromJSDate(dtend.toDate()).convertToZone(timezone);
+        event.startDate = ICAL.Time.fromJSDate(dtstart).convertToZone(timezone);
+        event.endDate = ICAL.Time.fromJSDate(dtend).convertToZone(timezone);
         event['location'] = location;
         let rrule = new ICAL.Recur({
             'freq': 'WEEKLY',
-            'until': ICAL.Time.fromJSDate(end_date.toDate()).convertToZone(timezone),
+            'until': ICAL.Time.fromJSDate(end_date).convertToZone(timezone),
             'byday': byday
         });
         vevent.updatePropertyWithValue('rrule', rrule);
