@@ -1,6 +1,6 @@
 {
   "name": "CalCentral Schedule to ical",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "manifest_version": 2,
   "description": "Easily download a calendar file from your calcentral schedule",
   "icons": {
