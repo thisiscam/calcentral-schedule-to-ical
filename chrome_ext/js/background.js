@@ -39,6 +39,14 @@ let timezone = new ICAL.Timezone({
   tzid
 });
 
+var currentTab;
+function toastr(type, msg) {
+    chrome.tabs.sendMessage(
+        currentTab.id,
+        {msg: "warn_user", toast_type: type, toast_msg: msg}
+    );
+};
+
 function makeCalender(userdata) {
     let cal = new ICAL.Component(['vcalendar', [], []]);
     pacific_time = 'America/Los_Angeles'; // Berkeley uses Pacific time
@@ -52,7 +60,7 @@ function makeCalender(userdata) {
         ;
         let section_dept_and_number = "{0} {1}".format(dept, course_number);
         if(section['meetings'].length == 0) {
-            console.warn("warning: Your {0} has no meeting, ignored in calender".format(section_dept_and_number));
+            toastr("warning", "Your {0} has no meeting, ignored in calender".format(section_dept_and_number));
             continue;
         }
         let meeting = section['meetings'][0];
@@ -66,7 +74,7 @@ function makeCalender(userdata) {
         let location = meeting['location'];
         let event_name = "{0} {1} {2}".format(section_dept_and_number, meeting_type, section_number);
         if(byday.length == 0) {
-            console.warn("warning: Your {} has no appointed time, ignored in calender".format(event_name));
+            toastr("warning", "Your {0} has no appointed time, ignored in calender".format(event_name));
             continue;
         }
         let vevent = new ICAL.Component('vevent'),
@@ -87,11 +95,12 @@ function makeCalender(userdata) {
 }
 
 chrome.pageAction.onClicked.addListener(function (tab) {
+    currentTab = tab;
     chrome.tabs.sendMessage(
         tab.id, 
-        'get_userdata', 
+        {msg: 'get_userdata'}, 
         responseCallback=function(userdata) {
-            calender = makeCalender(userdata);
+            calender = makeCalender(userdata, tab);
             let calendar_str = calender.toString();
             let download_str_uri = 'data:text/calender;charset=utf-8,' + encodeURIComponent(calendar_str);
             chrome.downloads.download({
