@@ -11,4 +11,6 @@ $ python transform.py [-o output_file]
 
 ## Chrome Extension
 
+[Use with Chrome](https://chrome.google.com/webstore/detail/calcentral-schedule-to-ic/fepbenicplghedfhmehgdggnddakpdpm?authuser=2)
+
 After installing and enabling the chrome extension, visit [CalCentral Academics](https://calcentral.berkeley.edu/academics "CalCentral Academics") -> Schedule Planner -> click "Organize and preview your upcoming semester"; you will be redirected to "berkeley.collegescheduler.com/spa#", and the extension icon should appear activated. Simply click the icon to download your calendar file and import to your calendar 
