@@ -1,3 +1,5 @@
+# IMPORTANT! This repo currently doesn't seem to work any more, and the author no longer have access to calcentral. See pinned issue #8 for more detail, if you are willing to help out
+
 # Usage
 
 ## Python Script
